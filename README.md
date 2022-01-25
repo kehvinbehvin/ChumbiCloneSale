@@ -1,5 +1,9 @@
-ChumbiClone contract address 0xdafe19f72c63933a1cc501b3009149e963e97a81
-FilSwan USDC testnet ERC20 contract address 0xe11a86849d99f524cac3e7a0ec1241828e332c62
+Setup
+- npm install
+- add .env file, see below
+- compile contract
+- deploy contract to testnet
+- verify and publish contract
 
 Tests
 - npx hardhat compile
@@ -15,21 +19,18 @@ Deployment flow
 - npx hardhat run scripts/<deployment script> --network <your network> --constructor-args
 - mumbai
     - npx hardhat run scripts/deploy.js --network polygon_mumbai
-        - first deployment = 0x97692ab2db6a778a20e16674f464e4863044c4c0
-        - second deployment = 0xd67b2cd77a4b49773d0a2443c08ab93e9c0b718d
-            - This was the incorrect address provided by deploy.js = 0x117814AF22Cb83D8Ad6e8489e9477d28265bc105 (no idea why)
-        - third deployment (ChumbiClone): incorrect address at 0xdAfe19f72c63933A1cC501B3009149e963E97A81,
-            - real address at 0xdafe19f72c63933a1cc501b3009149e963e97a81
-        - ChumbiCloneSale real address = 0x1878ce52fa7a71003987af6ca84627031d2a136f
-          - incorrect address at 0x1878CE52Fa7a71003987AF6cA84627031d2A136F
-
+        - ChumbiCloneSale address = 0x4a309a504F5C0dce335349dBeCB96dDe51C206F1
+        
 Create .env file
 - include your API KEY for which ever node provider you are using
-- ensure you have 1 variable for the API_URL and one for the API_KEY for the service provider
-- include your wallet private key
-- Relevant packages: dotenv
+  - ensure you have 1 variable for the API_URL and one for the API_KEY for the service provider
+- include your wallet private key and public key
+  - private key for signing transactions
+  - public key for deploying contract
+- include the addresses for ERC20 and ERC721 contracts.
+- include polygonscan api key to verify and publish contract after deployment
 
-Interacting with your contract
+Interacting with your contract (Broken)
 - npx hardhat run scripts/interact.js
 - You need 3 things to interact with your smart contract
     1. Your node provider api_key
@@ -45,3 +46,15 @@ Retrieving your contract address
 Verifying Contract on Etherscan/Polygonscan
 - npx hardhat verify --network polygon_mumbai --constructor-args arguments.js 0x1878ce52fa7a71003987af6ca84627031d2a136f
 - Relevant packages: hardhat-etherscan
+
+How to make a purchase using ChumbiCloneSale
+
+- Set chumbiSaleClone saleenabled or opentoALl to true (You can only buy if you are whitelisted / if there is sale going on)
+- Set ChumbiSaleClone contract as admin of ChumbiClone contract (Only admins can call transfer function on chumbiclone contract)
+- Get erc20token from metamaskwallet address = 0x237c2E322dA2A0000955d9EbE4b6ce111E1FA37a
+- Give approval to ChumbiCloneSale to make a transfer of tokens from your wallet to the ChumbiCloneSale contract
+  - Call approve function on ChumbiCloneERC20Token contract = 0x95B647fA16bcc5cA8c808B76B1bEeDAB4efb0Ef4
+    - Approve spender as ChumbiCloneSale contract = 0x4a309a504F5C0dce335349dBeCB96dDe51C206F1
+    - Can check transaction by calling allowance function, provide your wallet address and the ChumbiSaleClone contract
+  - Call purchase function on ChumbiCloneERC20Token contract = 0x95B647fA16bcc5cA8c808B76B1bEeDAB4efb0Ef4
+    - Pass in nfttype number
